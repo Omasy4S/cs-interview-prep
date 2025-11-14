@@ -248,7 +248,12 @@ function renderTabs() {
     const tabs = [
         { id: 'oop', title: 'ООП' },
         { id: 'algorithms', title: 'Алгоритмы' },
-        { id: 'data-structures', title: 'Структуры данных' }
+        { id: 'data-structures', title: 'Структуры данных' },
+        { id: 'leetcode', title: 'LeetCode' },
+        { id: 'event-loop', title: 'Event Loop' },
+        { id: 'solid', title: 'SOLID' },
+        { id: 'foundations', title: 'Основы' },
+        { id: 'theory', title: 'Теория' }
     ];
     tabsEl.innerHTML = tabs.map((t, i) => `
         <button type="button" id="tab-${t.id}" class="tab-btn${i===0?' active':''}" role="tab" aria-selected="${i===0}" aria-controls="${t.id}" tabindex="${i===0?'0':'-1'}" data-tab="${t.id}">${t.title}</button>
@@ -420,6 +425,422 @@ function renderTabContent(tabId) {
                 ],
                 explanation: 'Правильный ответ B.\n\nПочему: In-order обход (симметричный обход) бинарного дерева поиска (BST) посещает узлы в порядке: левое поддерево → корень → правое поддерево. Для данного дерева (корень 4, левый потомок 2 с детьми 1 и 3, правый потомок 6) обход происходит так: идем в левое поддерево (2), затем в его левое (1) — выводим 1; возвращаемся к 2 — выводим 2; идем в правое от 2 (3) — выводим 3; возвращаемся к корню 4 — выводим 4; идем в правое поддерево (6) — выводим 6. Результат: [1, 2, 3, 4, 6].\n\nЗачем: Бинарное дерево поиска — это структура данных, где для каждого узла все элементы в левом поддереве меньше узла, а в правом — больше. Это обеспечивает эффективный поиск, вставку и удаление за O(log n) в сбалансированном дереве. In-order обход BST всегда дает отсортированный массив, что используется для сортировки и проверки корректности дерева. Деревья применяются в базах данных (B-деревья), файловых системах, компиляторах (AST), автодополнении и многих других областях.'
             }
+        ],
+        leetcode: [
+            {
+                title: '1. Two Sum (Hash Map)',
+                code: `function twoSum(nums: number[], target: number): [number, number] {\n    const seen = new Map<number, number>();\n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        if (seen.has(complement)) {\n            return [seen.get(complement)!, i];\n        }\n        seen.set(nums[i], i);\n    }\n    return [-1, -1];\n}\nconsole.log(twoSum([2,7,11,15], 9));`,
+                question: 'Какой ответ вернёт функция и какова асимптотика?',
+                answers: [
+                    { text: 'A) [0,1], O(n)', correct: true },
+                    { text: 'B) [1,2], O(n log n)', correct: false },
+                    { text: 'C) [-1,-1], O(n²)', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Мы ищем числа 2 и 7, их сумма 9. HashMap позволяет проверить наличие complement за O(1) в среднем, поэтому пара индексов [0,1].\n\nЗачем: Two Sum — классический вопрос, проверяющий умение выбирать структуру данных под требуемую сложность. Решение с Map удовлетворяет требованию O(n) по времени и O(n) по памяти, что важно для задач уровня Easy/Medium на LeetCode.'
+            },
+            {
+                title: '2. Merge Intervals',
+                code: `function merge(intervals: [number, number][]): [number, number][] {\n    if (!intervals.length) return [];\n    intervals.sort((a, b) => a[0] - b[0]);\n    const merged: [number, number][] = [intervals[0]];\n    for (const [start, end] of intervals.slice(1)) {\n        const last = merged[merged.length - 1];\n        if (start <= last[1]) {\n            last[1] = Math.max(last[1], end);\n        } else {\n            merged.push([start, end]);\n        }\n    }\n    return merged;\n}\nconsole.log(merge([[1,3],[2,6],[8,10],[15,18]]));`,
+                question: 'Сколько интервалов получится после слияния и какая сложность?',
+                answers: [
+                    { text: 'A) [[1,6],[8,10],[15,18]], O(n log n)', correct: true },
+                    { text: 'B) [[1,3],[2,6],[8,10],[15,18]], O(n)', correct: false },
+                    { text: 'C) [[1,10],[15,18]], O(n²)', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: После сортировки интервалы [1,3] и [2,6] объединяются в [1,6], остальные не пересекаются. Сортировка диктует O(n log n).\n\nЗачем: Merge Intervals проверяет умение комбинировать сортировку и односкановые алгоритмы, что часто встречается в задачах уровня Medium.'
+            },
+            {
+                title: '3. LRU Cache (двусвязный список + Map)',
+                code: `class LRUCache {\n    private cache = new Map<number, number>();\n    constructor(private capacity: number) {}\n    get(key: number): number {\n        if (!this.cache.has(key)) return -1;\n        const value = this.cache.get(key)!;\n        this.cache.delete(key);\n        this.cache.set(key, value);\n        return value;\n    }\n    put(key: number, value: number): void {\n        if (this.cache.has(key)) {\n            this.cache.delete(key);\n        } else if (this.cache.size >= this.capacity) {\n            const oldestKey = this.cache.keys().next().value;\n            this.cache.delete(oldestKey);\n        }\n        this.cache.set(key, value);\n    }\n}\nconst lru = new LRUCache(2);\nlru.put(1,1);\nlru.put(2,2);\nconsole.log(lru.get(1));\nlru.put(3,3);\nconsole.log(lru.get(2));`,
+                question: 'Что выведет код и почему Map подходит для LRU?',
+                answers: [
+                    { text: 'A) 1 и -1; порядок ключей сохраняет свежесть => O(1)', correct: true },
+                    { text: 'B) 1 и 2; Map работает за O(log n)', correct: false },
+                    { text: 'C) -1 и -1; Map не гарантирует порядок', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: После get(1) порядок становится [2,1]; put(3,3) удаляет 2, поэтому get(2) = -1. Map в JS сохраняет порядок вставки, что позволяет быстро удалить самый старый ключ. Все операции — O(1) в среднем.\n\nЗачем: LRU Cache проверяет сочетание структур данных (список + Map/HashMap) и умение соблюдать ограничения по сложности.'
+            },
+            {
+                title: '4. Course Schedule (Topological Sort)',
+                code: `function canFinish(numCourses: number, prerequisites: number[][]): boolean {\n    const graph: number[][] = Array.from({ length: numCourses }, () => []);\n    const indegree = new Array(numCourses).fill(0);\n    for (const [course, pre] of prerequisites) {\n        graph[pre].push(course);\n        indegree[course]++;\n    }\n    const queue: number[] = [];\n    indegree.forEach((deg, i) => { if (deg === 0) queue.push(i); });\n    let visited = 0;\n    while (queue.length) {\n        const node = queue.shift()!;\n        visited++;\n        for (const next of graph[node]) {\n            indegree[next]--;\n            if (indegree[next] === 0) queue.push(next);\n        }\n    }\n    return visited === numCourses;\n}\nconsole.log(canFinish(2, [[1,0]]));`,
+                question: 'Почему алгоритм топологической сортировки решает задачу и какова сложность?',
+                answers: [
+                    { text: 'A) True, O(V+E)', correct: true },
+                    { text: 'B) False, O(V²)', correct: false },
+                    { text: 'C) True, O(log V)', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Курсы можно пройти, если граф ацикличен. Алгоритм Кана удаляет вершины с нулевой степенью, посещая каждую вершину и ребро один раз.\n\nЗачем: Топологическая сортировка — классическая тема LeetCode Hard/Medium на графы, демонстрирующая владение BFS и анализом зависимостей.'
+            },
+            {
+                title: '5. Binary Tree Level Order',
+                code: `class TreeNode {\n    constructor(\n        public val: number,\n        public left: TreeNode | null = null,\n        public right: TreeNode | null = null\n    ) {}\n}\nfunction levelOrder(root: TreeNode | null): number[][] {\n    if (!root) return [];\n    const result: number[][] = [];\n    const queue: TreeNode[] = [root];\n    while (queue.length) {\n        const levelSize = queue.length;\n        const level: number[] = [];\n        for (let i = 0; i < levelSize; i++) {\n            const node = queue.shift()!;\n            level.push(node.val);\n            if (node.left) queue.push(node.left);\n            if (node.right) queue.push(node.right);\n        }\n        result.push(level);\n    }\n    return result;\n}\nconst root = new TreeNode(1, new TreeNode(2), new TreeNode(3));\nconsole.log(levelOrder(root));`,
+                question: 'Почему BFS подходит для послойного обхода и какова сложность?',
+                answers: [
+                    { text: 'A) Потому что очередь хранит узлы уровня; O(n)', correct: true },
+                    { text: 'B) Потому что стек естественно задаёт уровни; O(log n)', correct: false },
+                    { text: 'C) Потому что сортировка даёт порядок; O(n log n)', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: BFS обходит дерево уровнями, используя очередь. Каждый узел посещается один раз => O(n) по времени и O(w) по памяти, где w — максимальная ширина.\n\nЗачем: Умение выбирать между DFS и BFS — основа большинства задач на деревья и графы.'
+            }
+        ],
+        'event-loop': [
+            {
+                title: '1. Стек вызовов и очередь задач',
+                code: `console.log('A');\nsetTimeout(() => console.log('B'), 0);\nconsole.log('C');`,
+                question: 'В каком порядке выведутся буквы и почему setTimeout не мгновенный?',
+                answers: [
+                    { text: 'A) A, C, B — таймер попадает в очередь макрозадач', correct: true },
+                    { text: 'B) A, B, C — setTimeout выполняется синхронно', correct: false },
+                    { text: 'C) B, A, C — очередь микрозадач выше приоритета', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Сначала выполняется синхронный стек (A, C). Колбэк setTimeout попадает в очередь макрозадач и будет обработан после опустошения стека.\n\nЗачем: Понимание очередей задач помогает избегать гонок и explain, почему «setTimeout(fn,0)» не ускоряет код.'
+            },
+            {
+                title: '2. Микрозадачи против макрозадач',
+                code: `Promise.resolve().then(() => console.log('microtask'));\nsetTimeout(() => console.log('macrotask'), 0);\nconsole.log('sync');`,
+                question: 'Каков порядок вывода и что происходит между тикками?',
+                answers: [
+                    { text: 'A) sync, microtask, macrotask — микрозадачи выполняются сразу после стека', correct: true },
+                    { text: 'B) sync, macrotask, microtask — setTimeout быстрее', correct: false },
+                    { text: 'C) microtask, sync, macrotask — промисы впереди синхронного кода', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: После синхронного «sync» движок опустошает очередь микрозадач (Promise), а затем берёт один макротаск из очереди (setTimeout).\n\nЗачем: Знание приоритетов микрозадач критично для оптимизации UI и избегания непредсказуемых состояний.'
+            },
+            {
+                title: '3. Async/Await как синтаксический сахар',
+                code: `async function load() {\n    console.log('start');\n    await Promise.resolve();\n    console.log('after await');\n}\nload();\nconsole.log('outside');`,
+                question: 'Почему после await код «приостанавливается» и куда попадает продолжение?',
+                answers: [
+                    { text: 'A) «after await» выполняется как микрозадача после outside', correct: true },
+                    { text: 'B) Async делает весь код синхронным', correct: false },
+                    { text: 'C) «after await» уходит в очередь макрозадач', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: await Promise превращается в then, который попадает в очередь микрозадач — поэтому «outside» появляется раньше «after await».\n\nЗачем: Понимание механики async/await необходимо для корректной обработки ошибок и оптимизации последовательных запросов.'
+            },
+            {
+                title: '4. requestAnimationFrame vs setTimeout',
+                code: `let frames = 0;\nfunction tick(timestamp: number) {\n    frames++;\n    if (frames < 3) {\n        requestAnimationFrame(tick);\n    } else {\n        console.log('frames:', frames);\n    }\n}\nrequestAnimationFrame(tick);`,
+                question: 'Чем requestAnimationFrame отличается от таймера при работе с DOM?',
+                answers: [
+                    { text: 'A) rAF синхронизируется с частотой экрана и выполняется перед отрисовкой', correct: true },
+                    { text: 'B) rAF гарантирует выполнение каждые 16мс вне зависимости от вкладки', correct: false },
+                    { text: 'C) rAF всегда быстрее setTimeout, потому что микрозадача', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: requestAnimationFrame ставит колбэк в очередь браузерного цикла отрисовки, позволяя выполнять анимацию без пропусков кадров.\n\nЗачем: Разница важна для производительных UI: таймеры могут работать, когда вкладка свернута, приводя к лишним вычислениям.'
+            },
+            {
+                title: '5. Блокировка Event Loop долгими задачами',
+                code: `const start = performance.now();\nwhile (performance.now() - start < 200) { /* имитация тяжёлой задачи */ }\nsetTimeout(() => console.log('done'), 0);`,
+                question: 'Почему «done» не появляется мгновенно и как избежать блокировки?',
+                answers: [
+                    { text: 'A) Цикл блокирует стек, пока не завершится; нужно дробить работу (chunking/Web Workers)', correct: true },
+                    { text: 'B) setTimeout сломан — надо увеличить delay', correct: false },
+                    { text: 'C) console.log блокирует вывод', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Пока синхронный цикл крутится, Event Loop не может обработать очередь задач. Разбиение нагрузки на микротаски/батчи или вынесение в Web Worker решает проблему.\n\nЗачем: Это фундамент для responsive UI и объяснение, почему «heavy JS» блокирует интерфейс.'
+            }
+        ],
+        solid: [
+            {
+                title: '1. SRP — принцип единственной ответственности',
+                code: `class ReportGenerator {\n    constructor(private data: string[]) {}\n    format(): string {\n        return this.data.join('\n');\n    }\n}\nclass ReportSaver {\n    save(content: string): void {\n        console.log('saving...', content);\n    }\n}\nconst generator = new ReportGenerator(['line1', 'line2']);\nconst saver = new ReportSaver();\nconst report = generator.format();\nsaver.save(report);`,
+                question: 'Почему разделение на два класса лучше, чем «God object»?',
+                answers: [
+                    { text: 'A) Каждый класс отвечает за одну причину изменения', correct: true },
+                    { text: 'B) Так код выполняется быстрее', correct: false },
+                    { text: 'C) Потому что нельзя иметь методы больше 10 строк', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: ReportGenerator занимается форматированием, а ReportSaver — сохранением. Изменение способа сохранения не трогает форматирование и наоборот.\n\nЗачем: SRP снижает связанность модулей и упрощает тестирование — ключ к поддерживаемому коду.'
+            },
+            {
+                title: '2. OCP — открытость для расширения',
+                code: `interface DiscountStrategy {\n    apply(amount: number): number;\n}\nclass PercentageDiscount implements DiscountStrategy {\n    constructor(private percent: number) {}\n    apply(amount: number): number {\n        return amount * (1 - this.percent);\n    }\n}\nclass BlackFridayDiscount implements DiscountStrategy {\n    apply(amount: number): number {\n        return amount - 50;\n    }\n}\nfunction checkout(amount: number, strategy: DiscountStrategy) {\n    return strategy.apply(amount);\n}\nconsole.log(checkout(200, new PercentageDiscount(0.1)));`,
+                question: 'Как OCP помогает добавлять скидки, не меняя checkout?',
+                answers: [
+                    { text: 'A) Новая логика добавляется созданием класса стратегии, не меняя существующий код', correct: true },
+                    { text: 'B) Нужно редактировать checkout при каждом виде скидки', correct: false },
+                    { text: 'C) Интерфейсы нарушают принцип', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: checkout зависит от абстракции DiscountStrategy. Новые виды скидок просто реализуют интерфейс.\n\nЗачем: Принцип OCP Боба Мартина позволяет минимизировать регрессии при добавлении функций.'
+            },
+            {
+                title: '3. LSP — принцип подстановки Лисков',
+                code: `class Rectangle {\n    constructor(public width: number, public height: number) {}\n    area() { return this.width * this.height; }\n}\nclass Square extends Rectangle {\n    constructor(size: number) { super(size, size); }\n}\nfunction printArea(rect: Rectangle) {\n    rect.width = 5;\n    rect.height = 4;\n    console.log(rect.area());\n}\nprintArea(new Square(2));`,
+                question: 'Почему Square нарушает LSP в таком примере и как исправить?',
+                answers: [
+                    { text: 'A) Потому что изменение ширины нарушает инвариант квадрата; отделите интерфейс «Shape»', correct: true },
+                    { text: 'B) Потому что площадь квадрата вычисляется иначе', correct: false },
+                    { text: 'C) Потому что наследование в целом запрещено', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Клиент ожидает, что можно независимо менять width/height, но Square вынужден синхронизировать стороны. Лучше использовать композицию или общий интерфейс без сеттеров.\n\nЗачем: LSP гарантирует, что подтип можно подставить вместо базового, не ломая поведение.'
+            },
+            {
+                title: '4. ISP — принцип разделения интерфейсов',
+                code: `interface Printer {\n    print(): void;\n    scan(): void;\n    fax(): void;\n}\nclass SimplePrinter implements Printer {\n    print() { console.log('print'); }\n    scan() { throw new Error('Not supported'); }\n    fax() { throw new Error('Not supported'); }\n}`,
+                question: 'Как избежать пустых реализаций и нарушений ISP?',
+                answers: [
+                    { text: 'A) Разбить интерфейс на IPrinter и IScanner, чтобы клиенты зависели только от нужных методов', correct: true },
+                    { text: 'B) Добавить default-реализацию с console.log', correct: false },
+                    { text: 'C) Заменить интерфейсы абстрактными классами', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Клиент SimplePrinter не должен реализовывать scan/fax, если они не требуются. Разделение интерфейсов уменьшает ложные зависимости.\n\nЗачем: ISP упрощает сопровождение API и снижает вероятность ошибок в runtime.'
+            },
+            {
+                title: '5. DIP — принцип инверсии зависимостей',
+                code: `interface Notifier {\n    send(message: string): void;\n}\nclass EmailNotifier implements Notifier {\n    send(message: string) {\n        console.log('Email:', message);\n    }\n}\nclass AlertService {\n    constructor(private notifier: Notifier) {}\n    trigger(message: string) {\n        this.notifier.send(message);\n    }\n}\nconst service = new AlertService(new EmailNotifier());\nservice.trigger('Build failed');`,
+                question: 'Почему AlertService зависит от интерфейса, а не конкретной реализации?',
+                answers: [
+                    { text: 'A) Чтобы подменять отправку (SMS, Slack) без изменения сервиса', correct: true },
+                    { text: 'B) Чтобы сократить количество файлов', correct: false },
+                    { text: 'C) Потому что интерфейсы быстрее классов', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: DIP предписывает высокоуровневым модулям зависеть от абстракций. Внедрение зависимостей (constructor injection) позволяет легко тестировать и расширять систему.\n\nЗачем: Это основа архитектуры на TypeScript/Node: легко мокать уведомления, логгер, хранилища.'
+            }
+        ],
+        foundations: [
+            {
+                title: '1. Cohesion (сцепление модуля)',
+                code: `class AuthService {\n    login() {/* ... */}\n    logout() {/* ... */}\n    refreshToken() {/* ... */}\n}\nclass NotificationService {\n    sendEmail() {/* ... */}\n    sendSMS() {/* ... */}\n}`,
+                question: 'Почему высокая функциональная связность лучше случайной?',
+                answers: [
+                    { text: 'A) Модуль работает вокруг одной задачи => легче сопровождать и тестировать', correct: true },
+                    { text: 'B) Потому что так меньше строк кода', correct: false },
+                    { text: 'C) Иначе нарушится Event Loop', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: AuthService сосредоточен на аутентификации, NotificationService — на уведомлениях. Если перемешать их обязанности, придется менять модуль по множеству причин.\n\nЗачем: Высокая cohesion означает, что изменение требований затрагивает минимальное количество компонентов.'
+            },
+            {
+                title: '2. Coupling (связанность)',
+                code: `class OrderService {\n    constructor(private payment = new PaymentGateway()) {}\n}\n// Лучшая версия:\nclass OrderServiceV2 {\n    constructor(private payment: PaymentGateway) {}\n}`,
+                question: 'Почему жёсткие зависимости вредны и как их ослабить?',
+                answers: [
+                    { text: 'A) Жёсткое создание внутри класса мешает тестам; передавайте зависимости снаружи', correct: true },
+                    { text: 'B) Сильная связность ускоряет выполнение', correct: false },
+                    { text: 'C) Связанность влияет только на CSS', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: OrderService сам решает, какой PaymentGateway использовать. Это затрудняет тестирование и расширение. Вторая версия ослабляет coupling через внедрение зависимостей.\n\nЗачем: Слабая связность позволяет переиспользовать сервисы и легко заменять реализации.'
+            },
+            {
+                title: '3. Big O Notation',
+                code: `function quadratic(nums: number[]): number {\n    let count = 0;\n    for (let i = 0; i < nums.length; i++) {\n        for (let j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] > 0) count++;\n        }\n    }\n    return count;\n}\nconsole.log(quadratic([ -1, 0, 2, 3 ]));`,
+                question: 'Почему сложность функции O(n²) и как её снизить?',
+                answers: [
+                    { text: 'A) Два вложенных цикла по n => O(n²); сортировка + два указателя даст O(n log n)', correct: true },
+                    { text: 'B) Потому что есть только один цикл', correct: false },
+                    { text: 'C) Big O зависит от данных, а не от алгоритма', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Для каждого i идёт второй цикл по j, что даёт квадрат роста времени. Можно отсортировать массив и использовать два указателя, чтобы сравнивать пары за O(n log n).\n\nЗачем: Владение Big O помогает выбирать алгоритмы под ограничения LeetCode и реальных систем.'
+            },
+            {
+                title: '4. Memory vs Time Trade-offs',
+                code: `function memoFib(n: number, memo: Record<number, number> = {}): number {\n    if (n <= 1) return n;\n    if (memo[n] !== undefined) return memo[n];\n    memo[n] = memoFib(n - 1, memo) + memoFib(n - 2, memo);\n    return memo[n];\n}\nconsole.log(memoFib(10));`,
+                question: 'Что выигрываем мемоизацией и какой ценой?',
+                answers: [
+                    { text: 'A) Время падает до O(n), но расход памяти растёт до O(n)', correct: true },
+                    { text: 'B) Сложность остаётся O(φⁿ), зато памяти 0', correct: false },
+                    { text: 'C) Мемоизация ухудшает всё', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Без мемоизации рекурсия вычисляет одинаковые значения многократно (экспоненциально). Хранение промежуточных результатов требует памяти, но линейно ускоряет алгоритм.\n\nЗачем: Это пример классического компромисса время/память, важного при системном дизайне.'
+            },
+            {
+                title: '5. Архитектурные слои',
+                code: `// Presentation -> Application -> Domain -> Infrastructure\nclass UserController {\n    constructor(private service: UserService) {}\n    async register(dto: RegisterDto) {\n        return this.service.register(dto);\n    }\n}\nclass UserService {\n    constructor(private repo: UserRepository) {}\n    async register(dto: RegisterDto) {\n        // валидация, доменная логика\n        return this.repo.save(dto);\n    }\n}`,
+                question: 'Зачем разделять приложение на слои и как это влияет на когезию/связанность?',
+                answers: [
+                    { text: 'A) Каждый слой решает свою задачу → высокая cohesion; зависимости направлены сверху вниз → слабая связанность', correct: true },
+                    { text: 'B) Чтобы увеличить количество файлов', correct: false },
+                    { text: 'C) Потому что фреймворки запрещают логику в контроллере', correct: false }
+                ],
+                explanation: 'Правильный ответ A.\n\nПочему: Контроллеры отвечают за HTTP, сервисы — за бизнес-логику, репозитории — за доступ к данным. Такой подход упрощает тестирование и развёртывание.\n\nЗачем: Слоистая архитектура — основа системного мышления разработчика и понимания «зачем».'
+            }
+        ],
+        theory: [
+            {
+                title: '1. Мышление «зачем»',
+                type: 'info',
+                icon: 'fa-brain',
+                tagline: 'От реактивного кодинга к продуктовому влиянию',
+                meta: ['Decision Records', 'Context First'],
+                summary: 'Сеньорским инженером делает не количество фреймворков, а привычка объяснять, зачем решение существует и когда оно перестанет работать.',
+                bullets: [
+                    'Контекст важнее синтаксиса: риск, бюджет, скорость и аудитория определяют архитектуру.',
+                    '5 строк Decision Record экономят часы митингов: проблема → варианты → выбор → риски.',
+                    'Эмпатия к бизнесу = язык влияния: объясняй последствия в метриках, а не в трейтах классов.'
+                ],
+                why: 'Причинно-следственное мышление делает систему устойчивой: ты видишь ограничения заранее и защищаешь решения перед бизнесом.',
+                how: 'Фиксируй мотивацию в README/ADR сразу после решения — один параграф дисциплинирует рассуждения и помогает коллегам (и ИИ) продолжить работу без тебя.',
+                takeaway: 'Привычка задавать «почему мы делаем это сейчас?» экономит месяцы поддержки и повышает доверие команды.',
+                quote: 'Context eats frameworks for breakfast.'
+            },
+            {
+                title: '2. Слои ответственности и связность',
+                type: 'info',
+                icon: 'fa-sitemap',
+                tagline: 'Cohesion & Coupling в реальных сервисах',
+                meta: ['Architecture', 'Team Hand-offs'],
+                summary: 'Высокая связность внутри модуля и слабая связанность между модулями ускоряют изменения и снижают стоимость ошибок.',
+                bullets: [
+                    'Cohesion = одна чёткая причина для изменения класса или сервиса.',
+                    'Coupling снижается внедрением зависимостей и контрактами, а не магией DI контейнера.',
+                    'Чёткие слои (контроллер → сервис → репозиторий) дают язык обсуждения с продактом.'
+                ],
+                why: 'Когда обязанности перемешаны, каждая правка превращается в minimonolith и тормозит команду.',
+                how: 'Проверяй архитектуру вопросом: «Можно ли переписать сервис, не трогая остальное?». Если нет — разделяй ответственность и вводи интерфейсы.',
+                takeaway: 'Лучший аргумент на ревью: не «так красивее», а «этот слой изменится по другой причине — разделим».',
+                quote: 'Сильная связность — это налог на скорость команды.'
+            },
+            {
+                title: '3. Алгоритмическая интуиция без скуки',
+                type: 'info',
+                icon: 'fa-chart-line',
+                tagline: 'Big-O как язык компромиссов',
+                meta: ['LeetCode', 'Performance'],
+                summary: 'Асимптотика — это не формула из учебника, а быстрый тест «проживёт ли решение рост данных».',
+                bullets: [
+                    'Называй сложность вместе с ограничением: O(n log n) при n ≤ 10⁵ звучит конкретнее.',
+                    'В голове держи 3 коридора: <10⁴ (всё сойдёт), <10⁶ (нужен логарифм), >10⁷ (только линейные/потоковые).',
+                    'Используй «стоимость итерации»: сколько запросов/памяти съест одно действие.'
+                ],
+                why: 'Без цифр задачи превращаются в угадайку и легко выбрать красивый, но медленный подход.',
+                how: 'На ревью проговаривай: «Берём два указателя — будем читать массив один раз, значит выдержим 5 млн элементов».',
+                takeaway: 'Алгоритмическая интуиция = скорость принятия решений под давлением продуктов и дедлайнов.',
+                quote: 'Сложность — это способ сказать бизнесу, выдержит ли система рост.'
+            },
+            {
+                title: '4. Event Loop как контракт UX',
+                type: 'info',
+                icon: 'fa-infinity',
+                tagline: 'Асинхронность = качество интерфейса',
+                meta: ['JS Runtime', 'Performance'],
+                summary: 'Event Loop — это соглашение о том, что интерфейс не должен застывать. Любая блокировка превращается в баг восприятия.',
+                bullets: [
+                    'Микрозадачи (Promise) закрывают контекст, прежде чем пользователь что-то заметит.',
+                    'Макрозадачи (таймеры, I/O) нужно дробить, чтобы не мешать отрисовке.',
+                    'requestAnimationFrame — единственный способ говорить с браузером на его частоте.'
+                ],
+                why: 'Без понимания очередей задач легко получить «подлагивающий» UI и вечные баг-репорты о тормозах.',
+                how: 'Дроби тяжёлые операции на чанки <16мс, выноси ML/парсинг в Web Worker, следи за длинными макрозадачами в Performance профайлере.',
+                takeaway: 'Инженер, который уважает Event Loop, экономит деньги компании на оптимизации и повышает NPS.'
+            },
+            {
+                title: '5. SOLID как язык договорённостей',
+                type: 'info',
+                icon: 'fa-cubes',
+                tagline: 'Принципы Роберта Мартина в 2025 году',
+                meta: ['SOLID', 'Командные практики'],
+                summary: 'SOLID — это не набор мантр, а способ говорить о рисках изменения кода.',
+                bullets: [
+                    'SRP защищает от «god objects» и облегчает делегирование задач.',
+                    'OCP = «добавь новый класс, не трогая старые» — ключ к быстрой эволюции продукта.',
+                    'DIP делает сервисы тестируемыми: зависим не от класса, а от контракта.'
+                ],
+                why: 'Когда команда понимает SOLID одинаково, ревью превращается в разговор о последствиях, а не о вкусе.',
+                how: 'Храни примеры нарушений в wiki: «вот где LSP нас подвёл, поэтому используем композицию».',
+                takeaway: 'SOLID — язык продукции: он объясняет, почему архитектура стоит времени.',
+                quote: 'Принципы — это страховка от хаоса изменений.'
+            },
+            {
+                title: '6. Observability и петли обратной связи',
+                type: 'info',
+                icon: 'fa-wave-square',
+                tagline: 'Видимость системы = уверенность команды',
+                meta: ['Metrics', 'Tracing', 'Postmortems'],
+                summary: 'Observability — это умение ответить на вопрос «что происходит?» без новой деплойки.',
+                bullets: [
+                    'Метрики SLI/SLO связывают технику с бизнес-обещаниями.',
+                    'Дистрибутивные трейсеры показывают, где теряется время, без гадания по логам.',
+                    'Постмортемы фиксируют уроки, а не виновных.'
+                ],
+                why: 'Без наблюдаемости любая авария превращается в хаос, а продукт теряет доверие пользователей.',
+                how: 'Добавляй корелированные ID, алерты с контекстом и короткие заметки «что узнали» после инцидента.',
+                takeaway: 'Система прозрачна — значит, команда тратит время на развитие, а не на гадание.',
+                quote: 'Неизмеримое нельзя улучшить.'
+            },
+            {
+                title: '7. Инженер + ИИ',
+                type: 'info',
+                icon: 'fa-robot',
+                tagline: 'Партнёрство, а не конкуренция',
+                meta: ['AI Pair', 'Prompt Design'],
+                summary: 'ИИ ускоряет генерацию кода, но ответственность за архитектуру, безопасность и «зачем» остаётся на человеке.',
+                bullets: [
+                    'Формулируй промпты как спеки: вход → ограничения → проверка.',
+                    'Храни контекст решений, чтобы ИИ продолжал работу в нужном направлении.',
+                    'Автоматизируй рутину (тесты, документацию), освобождая время под сложные решения.'
+                ],
+                why: 'ИИ без надзора порождает долговой код. Инженер задаёт рамки и оценивает риски.',
+                how: 'Используй ИИ как собеседника: проси перечислить компромиссы, составляй чек-листы для ревью.',
+                takeaway: 'Кто умеет управлять ИИ, тот масштабирует свой опыт на всю команду.',
+                quote: 'ИИ — ускоритель, но не заменитель инженерного суждения.'
+            },
+            {
+                title: '8. CAP-теорема в продуктах',
+                type: 'info',
+                icon: 'fa-diagram-project',
+                tagline: 'Consistency vs Availability vs Partition Tolerance',
+                meta: ['Distributed Systems', 'Trade-offs'],
+                summary: 'Нельзя одновременно гарантировать согласованность, доступность и устойчивость к разделению сети. CAP — линза для разговоров о данных.',
+                bullets: [
+                    'CP-системы (банки) жертвуют доступностью ради целостности.',
+                    'AP-системы (соцсети, кеши) выбирают доступность и принимают eventual consistency.',
+                    'Partition tolerance неизбежна: сеть всегда ломается.'
+                ],
+                why: 'CAP снимает иллюзию идеальной базы и помогает объяснить бизнесу, почему «не сразу видно у всех».',
+                how: 'Зафиксируй режим работы сервиса (CP или AP) и опиши, как клиенты узнают о конфликтах и когда данные сходятся.',
+                takeaway: 'Формальный выбор режима экономит время на споры и делает SLA честным.',
+                quote: 'Лучшее решение — то, у которого заранее проговорены жертвы.'
+            },
+            {
+                title: '9. ACID против BASE',
+                type: 'info',
+                icon: 'fa-scale-balanced',
+                tagline: 'Когда нужна жёсткая транзакция, а когда гибкость',
+                meta: ['Transactions', 'Storage'],
+                summary: 'ACID гарантирует строгую консистентность, BASE — скорость и эластичность. Обе модели легитимны, если говорить о ценах выборов.',
+                bullets: [
+                    'ACID = атомарность, изоляция, долговечность — дорого, но безопасно.',
+                    'BASE = Basically Available, Soft state, Eventually consistent — масштабно и гибко.',
+                    'Микс возможен, когда критичные данные отделены от вспомогательных.'
+                ],
+                why: 'Непонимание моделей порождает лишние миграции и двойные записи.',
+                how: 'Финансы и инвентарь держи на ACID, социальные фиды и аналитика — на BASE, всегда прописывай тайминг схода данных.',
+                takeaway: 'Спроси себя: что страшнее — временная рассинхронизация или потеря денег? Ответ и определяет выбор.',
+                quote: 'Консистентность — это инструмент, а не религия.'
+            },
+            {
+                title: '10. Event Sourcing + CQRS',
+                type: 'info',
+                icon: 'fa-stream',
+                tagline: 'История как источник правды',
+                meta: ['Domain Design', 'Auditable Systems'],
+                summary: 'Сохраняем поток событий и строим чтения отдельно. Состояние можно воспроизвести, а аудит становится встроенной функцией.',
+                bullets: [
+                    'Каждое событие — атомарное изменение домена с контекстом.',
+                    'Записи (commands) отделены от чтений (queries), поэтому системы масштабируются независимо.',
+                    'Проекции позволяют кастомизировать отчёты без переписывания бизнес-логики.'
+                ],
+                why: 'Когда надо ответить «кто и когда поменял баланс», снимок состояния бесполезен.',
+                how: 'Храни события append-only, делай реплей и асинхронные проекции, продумывай миграцию схем событий.',
+                takeaway: 'Event Sourcing дисциплинирует модель и снижает страх перед рефакторингом.',
+                quote: 'Истина — это поток фактов, а не последняя запись.'
+            },
+            {
+                title: '11. Эволюция и обратная совместимость',
+                type: 'info',
+                icon: 'fa-arrows-rotate',
+                tagline: 'Контракты живут дольше команд',
+                meta: ['API Design', 'Change Management'],
+                summary: 'Без планов миграции каждая новая версия API превращается в пожар. Совместимость — это уважение к пользователю.',
+                bullets: [
+                    'Версионирование + адаптеры дешевле, чем ручное уведомление клиентов.',
+                    'Feature flags и canary-релизы позволяют тестировать без даунтайма.',
+                    'Документация миграций и алерты по устаревшим вызовам экономят недели саппорта.'
+                ],
+                why: 'Клиенты обновляются медленно, и компания платит за любую внезапную поломку.',
+                how: 'Вводи V2 рядом с V1, публикуй таблицы соответствий, держи адаптеры, пока клиенты не перейдут.',
+                takeaway: 'Инженер, который думает об эволюции контракта, превращает breaking change в управляемый процесс.',
+                quote: 'Плавные миграции — это признак зрелости платформы.'
+            }
         ]
     };
     const questions = sections[tabId] || [];
@@ -428,22 +849,71 @@ function renderTabContent(tabId) {
     content.innerHTML = `
         <div class="questions-container">
             ${questions.map((q, i) => `
-                <div class="question-card${i===0?' active':''}" data-question-index="${i}">
-                    <h2>${q.title}</h2>
-                    <div class="code-block"><pre><code class="language-typescript">${q.code}</code></pre></div>
-                    <div class="question">
-                        <p><strong>Вопрос:</strong> ${q.question || 'Что выведется в консоль и почему?'}</p>
-                        <div class="answers">
-                            ${q.answers.map(a => `
-                                <button type="button" class="answer-btn" ${a.correct?'data-correct="true"':''}>${a.text}</button>
-                            `).join('')}
+                ${(function() {
+                    const isInfo = q.type === 'info';
+                    const cardClass = isInfo ? 'info-card' : `question-card${i===0?' active':''}`;
+                    const dataAttr = isInfo ? '' : ` data-question-index="${i}"`;
+                    const codeBlock = q.code ? `
+                        <div class="code-block"><pre><code class="language-typescript">${q.code}</code></pre></div>
+                    ` : '';
+                    if (isInfo) {
+                        const summary = q.summary ? `<p class="info-summary">${q.summary}</p>` : '';
+                        const bullets = Array.isArray(q.bullets) && q.bullets.length
+                            ? `<ul class="info-bullets">${q.bullets.map(item => `<li>${item}</li>`).join('')}</ul>`
+                            : '';
+                        const meta = Array.isArray(q.meta) && q.meta.length
+                            ? `<div class="info-meta">${q.meta.map(label => `<span class="info-pill">${label}</span>`).join('')}</div>`
+                            : '';
+                        const sections = [];
+                        if (q.why) sections.push({ label: 'Почему важно', icon: 'fa-lightbulb', text: q.why });
+                        if (q.how) sections.push({ label: 'Как применять', icon: 'fa-screwdriver-wrench', text: q.how });
+                        if (q.takeaway) sections.push({ label: 'Что запомнить', icon: 'fa-bookmark', text: q.takeaway });
+                        const sectionsHtml = sections.length
+                            ? `<div class="info-sections">${sections.map(section => `
+                                <div class="info-section">
+                                    <div class="info-section-title"><i class="fas ${section.icon}"></i>${section.label}</div>
+                                    <p>${section.text}</p>
+                                </div>
+                            `).join('')}</div>`
+                            : '';
+                        const quote = q.quote ? `<div class="info-quote"><i class="fas fa-quote-left"></i><p>${q.quote}</p></div>` : '';
+                        return `
+                            <article class="${cardClass}"${dataAttr}>
+                                <div class="info-header">
+                                    ${q.icon ? `<div class="info-icon"><i class="fas ${q.icon}"></i></div>` : ''}
+                                    <div class="info-headings">
+                                        <h2>${q.title}</h2>
+                                        ${q.tagline ? `<p class="info-tagline">${q.tagline}</p>` : ''}
+                                        ${meta}
+                                    </div>
+                                </div>
+                                ${summary}
+                                ${codeBlock}
+                                ${bullets}
+                                ${sectionsHtml}
+                                ${quote}
+                            </article>
+                        `;
+                    }
+                    return `
+                        <div class="${cardClass}"${dataAttr}>
+                            <h2>${q.title}</h2>
+                            ${codeBlock}
+                            <div class="question">
+                                <p><strong>Вопрос:</strong> ${q.question || 'Что выведется в консоль и почему?'}</p>
+                                <div class="answers">
+                                    ${q.answers.map(a => `
+                                        <button type="button" class="answer-btn" ${a.correct?'data-correct="true"':''}>${a.text}</button>
+                                    `).join('')}
+                                </div>
+                                <div class="explanation hidden">
+                                    <strong>Ответ:</strong>
+                                    ${q.explanation.split('\n\n').map(para => `<p>${para}</p>`).join('')}
+                                </div>
+                            </div>
                         </div>
-                        <div class="explanation hidden">
-                            <strong>Ответ:</strong>
-                            ${q.explanation.split('\n\n').map(para => `<p>${para}</p>`).join('')}
-                        </div>
-                    </div>
-                </div>
+                    `;
+                })()}
             `).join('')}
         </div>
     `;
@@ -601,12 +1071,19 @@ function updateNavigation() {
     const currentIndex = appState.currentQuestionIndex[tabId] || 0;
     const container = getQuestionsContainer(tabId);
     const navContainer = getOrCreateNavigationContainer(container);
-    
+    if (!questions.length) {
+        navContainer.innerHTML = '';
+        navContainer.classList.add('hidden');
+        return;
+    }
+    navContainer.classList.remove('hidden');
+
     // Создаем кнопки навигации
     const currentQuestion = questions[currentIndex];
     const isAnswered = currentQuestion ? isQuestionAnswered(currentQuestion) : false;
-    
-    navContainer.innerHTML = createNavigationHTML(currentIndex, questions.length, isAnswered);
+
+    const navigationHTML = createNavigationHTML(currentIndex, questions.length, isAnswered);
+    navContainer.innerHTML = navigationHTML;
 }
 
 /**
