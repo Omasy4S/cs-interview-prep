@@ -2,6 +2,404 @@
 // КОНФИГУРАЦИЯ И ДАННЫЕ
 // ============================================================================
 
+// Метаданные вкладок: используются для hero-блоков и навигации
+const tabsConfig = [
+    {
+        id: 'oop',
+        title: 'ООП',
+        hero: 'ООП без скуки',
+        eyebrow: 'TypeScript · Архитектура',
+        description: 'Разбираем четыре столпа объектно-ориентированного подхода на живых примерах и тренируемся применять их в реальном коде.'
+    },
+    {
+        id: 'algorithms',
+        title: 'Алгоритмы',
+        hero: 'Алгоритмическая интуиция',
+        eyebrow: 'Patterns · Big-O',
+        description: 'Собираем коллекцию паттернов (два указателя, скользящее окно, рекурсия), чтобы быстро выбирать правильный алгоритм на интервью.'
+    },
+    {
+        id: 'data-structures',
+        title: 'Структуры данных',
+        hero: 'Дизайн памяти',
+        eyebrow: 'Stacks · Trees · Maps',
+        description: 'Учимся выбирать структуры под ограничения продукта: скорость доступа, стоимость вставки и контроль памяти.'
+    },
+    {
+        id: 'leetcode',
+        title: 'LeetCode',
+        hero: 'Паттерны задач',
+        eyebrow: 'Practice · Insights',
+        description: 'От Two Sum до графов: закрепляем устойчивые подходы, чтобы распознавать задачу по нескольким признакам.'
+    },
+    {
+        id: 'event-loop',
+        title: 'Event Loop',
+        hero: 'Асинхронность = UX',
+        eyebrow: 'Runtime · JS',
+        description: 'Понимаем, как движок JS распределяет задачи, чтобы строить отзывчивый интерфейс без «фризов».'
+    },
+    {
+        id: 'solid',
+        title: 'SOLID',
+        hero: 'Принципы без мантр',
+        eyebrow: 'Clean Architecture',
+        description: 'Смотрим на SOLID как на язык договоренностей в команде: когда разделять классы и как защищаться от регрессий.'
+    },
+    {
+        id: 'foundations',
+        title: 'Основы',
+        hero: 'Системное мышление',
+        eyebrow: 'Cohesion · Coupling',
+        description: 'Повторяем фундаментальные идеи о связанности, слоях и сложностях, чтобы принимать архитектурные решения осознанно.'
+    },
+    {
+        id: 'theory',
+        title: 'Теория',
+        hero: 'Библиотека инсайтов',
+        eyebrow: 'Mindset · Leadership',
+        description: 'Собрание коротких эссе про мышление инженера: от CAP до Observability и работы с ИИ.'
+    }
+];
+
+const AppConfig = {
+    tabs: tabsConfig,
+    theory: {
+        global: null, // инициализируем ниже после объявления массива
+        byTab: null   // инициализируем после объявления theoryLibrary
+    }
+};
+
+const tabMetaMap = AppConfig.tabs.reduce((acc, tab) => {
+    acc[tab.id] = tab;
+    return acc;
+}, {});
+
+const globalTheoryInsights = [
+    {
+        type: 'info',
+        icon: 'fa-compass',
+        title: 'Стратегия подготовки к собеседованиям',
+        tagline: 'Focus > хаотичный гринд',
+        summary: 'Раздели подготовку на волны: теория → практика → симуляции. Каждая волна завершается конкретным deliverable (конспект, набор решённых задач, mock-interview).',
+        bullets: [
+            'Определи «мишень»: какие роли и стек нужны. Это отсечёт лишние темы.',
+            'Составь недельные слоты: 2× алгоритмы, 1× системный дизайн, 1× проект.',
+            'Каждый понедельник фиксируй инсайт недели — что изменишь в подходе.'
+        ],
+        why: 'Без системы подготовка превращается в марафон без финиша.',
+        how: 'Держи Kanban: backlog тем, in progress, done. После каждой сессии обновляй карточки и заметки.',
+        takeaway: 'Стратегия побеждает количество: важен прогресс по целям, а не счёт задач.'
+    },
+    {
+        type: 'info',
+        icon: 'fa-brain',
+        title: 'Ментальные модели для дебага',
+        tagline: 'От симптома к гипотезе',
+        summary: 'Рассматривай баг как гипотезу о нарушенном инварианте, а не как случайность.',
+        bullets: [
+            'Фиксируй ожидаемое состояние перед дебагом: это экономит время на «что должно быть».',
+            'Собирай факты, прежде чем править — логи, метрики, последовательность действий.',
+            'Каждый баг = новый чек в листе мониторинга.'
+        ],
+        why: 'Скорость фиксов зависит от того, как быстро ты находишь «узел» причины.',
+        how: 'Используй цикл: гипотеза → эксперимент → вывод. Документируй, чтобы команда училась вместе.',
+        takeaway: 'Дебаг — это исследование системы, а не угадайка.'
+    },
+    {
+        type: 'info',
+        icon: 'fa-lightbulb',
+        title: 'Product thinking для разработчика',
+        tagline: 'Пиши код с пониманием ценности',
+        summary: 'Каждая фича — это гипотеза про метрики. Задача инженера — знать, какую метрику защищает его решение.',
+        bullets: [
+            'Всегда спрашивай «как мы узнаем, что это сработало?»',
+            'Описывай фичу через пользовательский сценарий, а не только API.',
+            'Фиксируй ограничения: SLA, платформы, доступность.'
+        ],
+        why: 'Код без контекста быстро превращается в техдолг.',
+        how: 'Перед задачей напиши mini-brief: проблема → аудитория → успех.',
+        takeaway: 'Product thinking = способность объяснить, зачем существует твоя фича.'
+    },
+    {
+        type: 'info',
+        icon: 'fa-rocket',
+        title: 'Системы обучения и рост инженера',
+        tagline: 'Постоянная кривая развития',
+        summary: 'Рост = deliberate practice. Запланируй циклы: выбери навык → зафиксируй уровень → создай упражнение → ищи фидбек.',
+        bullets: [
+            'Держи журнал боли: баги, ревью, задачи, где не хватило знаний.',
+            'Каждому навыку ставь KPI: «хочу за 30 минут объяснить Monorepo setup новичку».',
+            'Построй peer-группу: обмен экспериментами ускоряет рост.'
+        ],
+        why: 'Без системы обучения карьерный рост случайен.',
+        how: 'Раз в квартал пересматривай карту навыков и планируй следующий фокус.',
+        takeaway: 'Инженер растёт не от лет стажа, а от осознанных циклов обучения.'
+    },
+    {
+        type: 'info',
+        icon: 'fa-book-open-reader',
+        title: 'Чтение чужого кода',
+        tagline: 'Учимся по живым системам',
+        summary: 'Самый быстрый способ расти — читать код людей, которые сильнее тебя, и пытаться переписать его проще.',
+        bullets: [
+            'Ищи не «идеальный» код, а устойчивые решения в боевых сервисах.',
+            'Всегда задавай себе вопрос: «почему это написано именно так?» и выписывай гипотезы.',
+            'Пытайся переписать кусок короче — если теряется смысл, значит оригинал был не случайным.'
+        ],
+        why: 'Чтение кода прокачивает архитектурное чутьё и даёт реальные паттерны, а не учебные примеры.',
+        how: 'Заведи «читательский дневник кода»: ссылки, вырезки и короткие комментарии, что тебя удивило.',
+        takeaway: 'Чужой код — это бесплатный ментор, если относиться к нему как к учебнику.'
+    },
+    {
+        type: 'info',
+        icon: 'fa-people-arrows',
+        title: 'Код-ревью без токсичности',
+        tagline: 'Feedback как инструмент роста',
+        summary: 'Хорошее ревью улучшает систему и отношения в команде, а не самоутверждает ревьюера.',
+        bullets: [
+            'Сначала спроси про контекст: ограничения, дедлайны, компромиссы.',
+            'Комментируй последствия: «так будет сложнее протестировать», а не «это плохой код».',
+            'Предлагай варианты: показывай альтернативу, а не только проблему.'
+        ],
+        why: 'Тон ревью напрямую влияет на скорость доставки и желание людей брать сложные задачи.',
+        how: 'Используй формат: «наблюдение → риск → предложение». Например: «этот if дублируется, это риск расхождения логики, давай вынесем в helper».',
+        takeaway: 'Ревью — это разговор о рисках и архитектуре, а не соревнование в умности.'
+    },
+    {
+        type: 'info',
+        icon: 'fa-recycle',
+        title: 'Работа с legacy-кодом',
+        tagline: 'Рефакторинг без героизма',
+        summary: 'Legacy — это код без контекста. Сначала восстанови контекст, потом трогай строки.',
+        bullets: [
+            'Добавляй тесты вокруг поведения, которое боишься сломать.',
+            'Фиксируй предположения в комментариях к коммитам и ADR: зачем ты меняешь этот участок.',
+            'Рефакторь по шагам: сперва сделать код наблюдаемым, потом безопасным, и только потом красивым.'
+        ],
+        why: 'Большая часть времени уходит не на новый код, а на эволюцию старого.',
+        how: 'Не переписывай всё с нуля. Выделяй seam-ы (границы), через которые можно постепенно вытеснять старую реализацию.',
+        takeaway: 'Сильный инженер умеет жить с legacy и уменьшать его, а не только писать «с нуля».'
+    }
+];
+
+const theoryLibrary = {
+    oop: [
+        {
+            icon: 'fa-shield-halved',
+            title: 'Инварианты через инкапсуляцию',
+            tagline: 'State as a contract',
+            summary: 'Инкапсуляция — это не про private-поля, а про гарантии того, что объект не перейдёт в недопустимое состояние.',
+            code: `class Account {
+    #balance = 0;
+    deposit(amount) {
+        if (amount <= 0) throw new Error('only positive');
+        this.#balance += amount;
+    }
+    transfer(target, amount) {
+        if (amount > this.#balance) throw new Error('no funds');
+        this.#balance -= amount;
+        target.deposit(amount);
+    }
+}`,
+            bullets: [
+                'Инвариант: баланс не уходит в минус и меняется только через методы.',
+                'Ошибки ловятся в одном месте, а не распределяются по коду.'
+            ],
+            why: 'Защищённые инварианты позволяют строить высокоуровневые сценарии без страха «сломать» объект.',
+            how: 'Всегда формулируй, что объект гарантирует внешнему миру, и закрывай прямой доступ к состоянию.',
+            takeaway: 'Инкапсуляция = контроль правил, а не просто приватность.'
+        },
+        {
+            icon: 'fa-code-branch',
+            title: 'Полиморфизм как расширяемость',
+            tagline: 'Поведение по контракту',
+            summary: 'Полиморфизм нужен, чтобы добавлять сценарии без изменения существующего кода.',
+            code: `interface NotificationChannel {
+    send(message: string): void;
+}
+class EmailChannel implements NotificationChannel {
+    send(message) { console.log('Email', message); }
+}
+class SlackChannel implements NotificationChannel {
+    send(message) { console.log('Slack', message); }
+}
+class IncidentNotifier {
+    constructor(private channel: NotificationChannel) {}
+    fire(message) { this.channel.send(message); }
+}`,
+            bullets: [
+                'Бизнес-комбинаторика растёт быстрее, чем код — нужна точка расширения.',
+                'Контракты упрощают тесты: подставил фейковый канал и проверил сценарий.'
+            ],
+            why: 'Новые каналы коммуникации появляются чаще, чем рефакторится ядро системы.',
+            how: 'Описывай ожидаемое поведение интерфейсом и внедряй зависимости через конструктор.',
+            takeaway: 'Полиморфизм — это про устойчивость к изменениям, а не про красивую иерархию.'
+        }
+    ],
+    algorithms: [
+        {
+            icon: 'fa-chart-line',
+            title: 'Алгоритмические коридоры',
+            tagline: 'Сложность vs ограничения',
+            summary: 'Перед выбором алгоритма нужно назвать ограничения входа: до 10⁴ — линейный перебор, до 10⁶ — логарифмы, выше — потоковые техники.',
+            bullets: [
+                'Данные < 10⁴ — можно позволить себе O(n²) и не усложнять код.',
+                'Диапазон 10⁶–10⁷ — только O(n log n) и продуманная память.'
+            ],
+            why: 'Инженеру приходится аргументировать, почему решение выдержит трафик продукта.',
+            how: 'Всегда озвучивай «коридор» перед кодом и обсуждай trade-off памяти/времени.',
+            takeaway: 'Сложность — это язык общения с бизнесом о масштабируемости.'
+        },
+        {
+            icon: 'fa-road',
+            title: 'Жадные против динамики',
+            tagline: 'Выбор стратегии',
+            summary: 'Жадные алгоритмы быстры, если можно доказать локальную оптимальность. ДП — когда нужно хранить прошлые решения.',
+            code: `function minCoins(amount, coins) {
+    const dp = Array(amount + 1).fill(Infinity);
+    dp[0] = 0;
+    for (const coin of coins) {
+        for (let i = coin; i <= amount; i++) {
+            dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+        }
+    }
+    return dp[amount];
+}`,
+            bullets: [
+                'Если решение зависит только от текущего выбора — жадный подход.',
+                'Если важно помнить путь — применяй табличку (ДП).'
+            ],
+            why: 'Не бывает «универсального» алгоритма — нужно объяснять логику выбора.',
+            how: 'Проверь контрпример: если жадный провалится хоть раз, бери ДП.',
+            takeaway: 'Определяй структуру задачи до того, как писать код.'
+        }
+    ],
+    'data-structures': [
+        {
+            icon: 'fa-database',
+            title: 'Структура = SLA операций',
+            summary: 'Структура данных выбирается под конкретные гарантийные буквы (вставка, чтение, удаление).',
+            bullets: [
+                'Очередь — когда важна справедливость, стек — когда важна история.',
+                'Хеши дают O(1) в среднем, но чувствительны к коллизиям.'
+            ],
+            why: 'Неверный выбор структуры становится бутылочным горлышком спустя месяцы.',
+            how: 'Перед реализацией заполни таблицу операций: сколько раз в секунду, какая задержка допустима.',
+            takeaway: 'Структура данных — архитектурное решение, а не деталь реализации.'
+        },
+        {
+            icon: 'fa-tree',
+            title: 'Когда нужны деревья',
+            summary: 'Деревья выигрывают, когда нужно хранить частично упорядоченные данные и быстро искать диапазоны.',
+            code: `class SegmentTree {
+    constructor(nums) {
+        this.size = nums.length;
+        this.tree = Array(this.size * 2).fill(0);
+        for (let i = 0; i < this.size; i++) this.tree[this.size + i] = nums[i];
+        for (let i = this.size - 1; i > 0; i--) {
+            this.tree[i] = this.tree[i * 2] + this.tree[i * 2 + 1];
+        }
+    }
+}`,
+            bullets: ['Сегментные деревья отвечают на запросы диапазонов за O(log n).'],
+            why: 'Когда данных много и запросов ещё больше, линейный перебор становится непозволительно дорогим.',
+            how: 'Разбивай задачу на блоки (узлы), где каждый блок хранит агрегат.',
+            takeaway: 'Дерево — компромисс между массивом и хешом.'
+        }
+    ],
+    leetcode: [
+        {
+            icon: 'fa-list-check',
+            title: 'Распознаём паттерн',
+            summary: 'Любая задача на массивы сводится к 5 приёмам: два указателя, скользящее окно, префиксы, сортировка + merge, стеки.',
+            bullets: ['Держи рядом таблицу «симптом → паттерн».', 'Вопрос про строки с ограничением k — почти всегда окно.'],
+            why: 'На собеседовании побеждает тот, кто быстро узнаёт форму задачи.',
+            how: 'После чтения условия отметь ключевые слова: «отсортировано», «k элементов», «подмассив» — это подсказки.',
+            takeaway: 'Паттерн = сокращённый путь к решению.'
+        },
+        {
+            icon: 'fa-repeat',
+            title: 'Цикл обратной связи',
+            summary: 'После каждого решения фиксируй, что можно автоматизировать: шаблон кода, тест, визуализация.',
+            why: 'Так формируется долгосрочная память, а не просто счёт решённых задач.',
+            how: 'Пиши короткий ADR: условие → найденный паттерн → в каком случае не сработает.',
+            takeaway: 'LeetCode — это не про количество, а про скорость распознавания.'
+        }
+    ],
+    'event-loop': [
+        {
+            icon: 'fa-infinity',
+            title: 'Очереди задач',
+            tagline: 'UX как договор',
+            summary: 'Event Loop гарантирует, что синхронный стек выполняется до конца, а потом берётся следующая задача.',
+            code: `console.log('sync');
+queueMicrotask(() => console.log('micro'));
+setTimeout(() => console.log('macro'), 0);`,
+            bullets: ['Микрозадачи выполняются перед следующей перерисовкой.', 'Длинные макрозадачи = лаг UI.'],
+            why: 'Без понимания очередей легко «подвесить» интерфейс таймером на 200мс.',
+            how: 'Дроби тяжёлые операции на чанки < 16мс, измеряй в Performance профайлере.',
+            takeaway: 'Уважай Event Loop — и пользователи не увидят спиннеры.'
+        },
+        {
+            icon: 'fa-wand-magic-sparkles',
+            title: 'Async/await как синтаксический сахар',
+            summary: 'Await просто раскладывает промис на then, который попадает в очередь микрозадач.',
+            why: 'Ошибки возникают, когда ожидают синхронности от async-функций.',
+            how: 'Всегда учитывай, что после await управление возвращается в цикл событий — обнови состояние до await.',
+            takeaway: 'Async/await — удобочитаемость, но не отмена асинхронной модели.'
+        }
+    ],
+    solid: [
+        {
+            icon: 'fa-layer-group',
+            title: 'SRP как контроль причин изменений',
+            summary: 'Класс должен меняться по одной причине. Иначе релиз превращается в серийные регрессии.',
+            bullets: ['Fix-ы бродят между классами, когда в них смешаны обязанности.', 'SRP = дешёвые тесты и простая замена.'],
+            why: 'В продуктовой разработке требования меняются быстрее, чем пишется код.',
+            how: 'На ревью задавай вопрос: «что вынудит изменить этот модуль?» — если причин >1, дели ответственность.',
+            takeaway: 'SRP — это про устойчивость рефакторинга.'
+        },
+        {
+            icon: 'fa-plug-circle-bolt',
+            title: 'DIP и тестируемость',
+            summary: 'Инфраструктурные детали (HTTP, хранилище, email) должны зависеть от абстракций, иначе сервисы невозможно тестировать.',
+            code: `class BillingService {
+    constructor(private payment: PaymentGateway) {}
+    async charge(order) {
+        await this.payment.pay(order.total);
+    }
+}`,
+            why: 'Нам нужно уметь подменять зависимости без переписывания ядра.',
+            how: 'Зависимости передаются извне (inversion) и мокируются на тестах.',
+            takeaway: 'DIP — фундамент для конфигурируемой архитектуры.'
+        }
+    ],
+    foundations: [
+        {
+            icon: 'fa-diagram-project',
+            title: 'Cohesion vs Coupling',
+            summary: 'Высокая связность внутри модуля и слабая между модулями — главный критерий архитектурной чистоты.',
+            why: 'Случайное перемешивание обязанностей приводит к «мини-монолитам» и дорогому развитию.',
+            how: 'Смотри на причины изменений: разные причины → разные модули.',
+            takeaway: 'Cohesion — про скорость команды, Coupling — про стресс при релизах.'
+        },
+        {
+            icon: 'fa-scale-balanced',
+            title: 'Компромисс время/память',
+            summary: 'Мемоизация, кэши, lookup-таблицы — всё это обмен памяти на скорость.',
+            why: 'Нужно заранее планировать бюджет ресурсов, иначе оптимизация превратится в пожар.',
+            how: 'Фиксируй SLA: сколько миллисекунд готов потратить, сколько мегабайт доступно.',
+            takeaway: 'Хороший инженер объясняет, какой ресурс он покупает за счёт другого.'
+        }
+    ]
+};
+
+AppConfig.theory.global = globalTheoryInsights;
+AppConfig.theory.byTab = theoryLibrary;
+
+const COMPLETION_STORAGE_KEY = 'cs-prep.completedTabs';
+
 // Мотивирующие цитаты в зависимости от процента правильных ответов
 const motivationalQuotes = {
     excellent: [
@@ -30,8 +428,76 @@ const motivationalQuotes = {
 const appState = {
     currentTab: 'oop',
     currentQuestionIndex: {}, // Индекс текущего вопроса для каждой вкладки
-    correctAnswers: {} // Количество правильных ответов для каждой вкладки
+    correctAnswers: {}, // Количество правильных ответов для каждой вкладки
+    completedTabs: loadCompletedTabs()
 };
+
+function loadCompletedTabs() {
+    try {
+        const raw = localStorage.getItem(COMPLETION_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch (error) {
+        console.warn('Не удалось загрузить статус тем:', error);
+        return {};
+    }
+}
+
+function saveCompletedTabs() {
+    try {
+        localStorage.setItem(COMPLETION_STORAGE_KEY, JSON.stringify(appState.completedTabs));
+    } catch (error) {
+        console.warn('Не удалось сохранить статус тем:', error);
+    }
+}
+
+function isTabCompleted(tabId) {
+    return Boolean(appState.completedTabs && appState.completedTabs[tabId]);
+}
+
+function markTabCompleted(tabId, payload = {}) {
+    appState.completedTabs[tabId] = {
+        completedAt: new Date().toISOString(),
+        ...payload
+    };
+    saveCompletedTabs();
+    updateTabCompletionIndicators();
+    updateHeroCompletionBadge(tabId);
+}
+
+function updateTabCompletionIndicators() {
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach((btn) => {
+        const tabId = btn.getAttribute('data-tab');
+        const statusEl = btn.querySelector('.tab-status');
+        const completed = isTabCompleted(tabId);
+        btn.classList.toggle('tab-btn-completed', completed);
+        if (statusEl) {
+            statusEl.innerHTML = completed
+                ? '<i class="fas fa-check-circle"></i> Пройдено'
+                : '<i class="fas fa-book-open"></i> Теория + практика';
+        }
+    });
+}
+
+function updateHeroCompletionBadge(tabId) {
+    const pill = document.querySelector(`.hero-progress-pill[data-hero-status="${tabId}"]`);
+    if (!pill) return;
+    const defaultLabel = pill.dataset.defaultLabel || 'Теория → Практика → Результат';
+    if (isTabCompleted(tabId)) {
+        pill.classList.add('completed');
+        pill.innerHTML = '<i class="fas fa-check-circle"></i> Тема пройдена на 100%';
+    } else {
+        pill.classList.remove('completed');
+        pill.innerHTML = `<i class="fas fa-book-reader"></i> ${defaultLabel}`;
+    }
+}
+
+function scrollPracticeIntoView() {
+    const practicePanel = document.querySelector('.practice-panel');
+    if (!practicePanel) return;
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    practicePanel.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+}
 
 // ============================================================================
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -62,7 +528,9 @@ function areAllQuestionsAnswered(questions) {
  * @returns {HTMLElement} - контейнер с вопросами
  */
 function getQuestionsContainer(tabId) {
-    return document.querySelector('.questions-container') || document.getElementById('content');
+    const practicePanel = document.querySelector('.practice-panel');
+    if (!practicePanel) return document.getElementById('content');
+    return practicePanel.querySelector('.questions-container') || practicePanel;
 }
 
 /**
@@ -71,7 +539,9 @@ function getQuestionsContainer(tabId) {
  * @returns {NodeList} - список вопросов
  */
 function getQuestions(tabId) {
-    return document.querySelectorAll('.question-card');
+    const practicePanel = document.querySelector('.practice-panel');
+    if (!practicePanel) return document.querySelectorAll('.question-card');
+    return practicePanel.querySelectorAll('.question-card');
 }
 
 /**
@@ -102,6 +572,271 @@ function getOrCreateResultsContainer(container) {
         container.appendChild(resultsContainer);
     }
     return resultsContainer;
+}
+
+function applyCodeHighlighting() {
+    if (typeof hljs === 'undefined') return;
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+    });
+}
+
+function renderInfoCard(card) {
+    const rawTitle = card.title || 'Теория';
+    const title = rawTitle.replace(/^\d+\.\s*/, '');
+    const summary = card.summary ? `<p class="info-summary">${card.summary}</p>` : '';
+    const bullets = Array.isArray(card.bullets) && card.bullets.length
+        ? `<ul class="info-bullets">${card.bullets.map(item => `<li>${item}</li>`).join('')}</ul>`
+        : '';
+    const meta = Array.isArray(card.meta) && card.meta.length
+        ? `<div class="info-meta">${card.meta.map(label => `<span class="info-pill">${label}</span>`).join('')}</div>`
+        : '';
+    const sections = [];
+    if (card.why) sections.push({ label: 'Почему важно', icon: 'fa-lightbulb', text: card.why });
+    if (card.how) sections.push({ label: 'Как применять', icon: 'fa-screwdriver-wrench', text: card.how });
+    if (card.takeaway) sections.push({ label: 'Что запомнить', icon: 'fa-bookmark', text: card.takeaway });
+    const sectionsHtml = sections.length
+        ? `<div class="info-sections">${sections.map(section => `
+            <div class="info-section">
+                <div class="info-section-title"><i class="fas ${section.icon}"></i>${section.label}</div>
+                <p>${section.text}</p>
+            </div>
+        `).join('')}</div>`
+        : '';
+    const quote = card.quote ? `<div class="info-quote"><i class="fas fa-quote-left"></i><p>${card.quote}</p></div>` : '';
+    const codeBlock = card.code ? `
+        <div class="code-block"><pre><code class="language-typescript">${card.code}</code></pre></div>
+    ` : '';
+    return `
+        <article class="info-card">
+            <div class="info-header">
+                ${card.icon ? `<div class="info-icon"><i class="fas ${card.icon}"></i></div>` : ''}
+                <div class="info-headings">
+                    <h2>${title}</h2>
+                    ${card.tagline ? `<p class="info-tagline">${card.tagline}</p>` : ''}
+                    ${meta}
+                </div>
+            </div>
+            ${summary}
+            ${codeBlock}
+            ${bullets}
+            ${sectionsHtml}
+            ${quote}
+        </article>
+    `;
+}
+
+function renderQuestionCard(question, index) {
+    const codeBlock = question.code ? `
+        <div class="code-block"><pre><code class="language-typescript">${question.code}</code></pre></div>
+    ` : '';
+    const answers = (question.answers || []).map(answer => `
+        <button type="button" class="answer-btn" ${answer.correct ? 'data-correct="true"' : ''}>${answer.text}</button>
+    `).join('');
+    const explanation = question.explanation ? `
+        <div class="explanation hidden">
+            <strong>Ответ:</strong>
+            ${question.explanation.split('\n\n').map(para => `<p>${para}</p>`).join('')}
+        </div>
+    ` : '';
+    return `
+        <div class="question-card${index === 0 ? ' active' : ''}" data-question-index="${index}">
+            <h2>${question.title}</h2>
+            ${codeBlock}
+            <div class="question">
+                <p><strong>Вопрос:</strong> ${question.question || 'Что выведется в консоль и почему?'}</p>
+                <div class="answers">${answers}</div>
+                ${explanation}
+            </div>
+        </div>
+    `;
+}
+
+function renderTheoryContent(tabId, theoryEntries, hasPractice) {
+    const theoryPanel = document.querySelector('.theory-panel');
+    if (!theoryPanel) return;
+    const meta = tabMetaMap[tabId] || {};
+    const heroHTML = `
+        <div class="theory-hero">
+            <p class="hero-eyebrow">${meta.eyebrow || 'Теоретический обзор'}</p>
+            <div class="hero-headline">
+                <h2>${meta.hero || meta.title || 'Раздел'}</h2>
+                <span class="hero-progress-pill" data-hero-status="${tabId}" data-default-label="Теория → Практика → Результат">
+                    <i class="fas fa-book-reader"></i> Теория → Практика → Результат
+                </span>
+            </div>
+            <p class="hero-description">${meta.description || 'Собери контекст, а затем закрепи тестами.'}</p>
+        </div>
+    `;
+    const body = theoryEntries.length
+        ? `<div class="theory-stream">${theoryEntries.map(renderInfoCard).join('')}</div>`
+        : `<div class="theory-empty">
+                <i class="fas fa-mug-hot"></i>
+                <p>Теоретические заметки появятся позже. Пока можно перейти сразу к тестам.</p>
+            </div>`;
+    const practiceCta = hasPractice ? `
+        <div class="practice-launch">
+            <div class="practice-launch-copy">
+                <p class="practice-launch-eyebrow">Готов проверить себя?</p>
+                <h3>Закрепи тему мини-тестом</h3>
+                <p>Пройди ${hasPractice ? 'короткое тестирование' : 'тестирование'} и отметь раздел как «пройденный», если возьмёшь 100%.</p>
+            </div>
+            <button type="button" class="practice-launch-btn" data-action="launch-practice" data-tab="${tabId}">
+                <i class="fas fa-clipboard-check"></i>
+                Пройти тестирование
+            </button>
+        </div>
+    ` : '';
+    theoryPanel.innerHTML = heroHTML + body + practiceCta;
+    updateHeroCompletionBadge(tabId);
+    applyCodeHighlighting();
+}
+
+function splitTabEntries(rawEntries, tabId) {
+    const practiceQuestions = [];
+    const theoryByTab = AppConfig.theory.byTab || {};
+    const theoryEntries = theoryByTab[tabId] ? [...theoryByTab[tabId]] : [];
+    rawEntries.forEach((entry) => {
+        if (entry && entry.type === 'info') theoryEntries.push(entry);
+        else practiceQuestions.push(entry);
+    });
+
+    const usedTitles = new Set(theoryEntries.map(item => normalizeTheoryTitle(item.title)));
+    practiceQuestions
+        .filter(Boolean)
+        .forEach((question) => {
+            const generated = createTheoryEntryFromQuestion(question);
+            const key = normalizeTheoryTitle(generated.title);
+            if (!usedTitles.has(key)) {
+                theoryEntries.push(generated);
+                usedTitles.add(key);
+            }
+        });
+
+    return { theoryEntries, practiceQuestions };
+}
+
+function createTheoryEntryFromQuestion(question) {
+    const paragraphs = (question.explanation || '')
+        .split('\n\n')
+        .map(part => part.trim())
+        .filter(Boolean);
+    const why = extractParagraphByLabel(paragraphs, 'Почему');
+    const how = extractParagraphByLabel(paragraphs, 'Как');
+    const takeaway = extractParagraphByLabel(paragraphs, 'Зачем');
+    const summary = buildTheorySummary(paragraphs, why, question);
+    return {
+        icon: 'fa-chalkboard-teacher',
+        title: question.title.replace(/^\d+\.\s*/, ''),
+        tagline: 'Инженерный инсайт',
+        summary,
+        code: question.code,
+        why,
+        how,
+        takeaway
+    };
+}
+
+function extractParagraphByLabel(paragraphs, label) {
+    const prefix = `${label}:`;
+    const paragraph = paragraphs.find(part => part.startsWith(prefix));
+    return paragraph ? paragraph.slice(prefix.length).trim() : undefined;
+}
+
+function buildTheorySummary(paragraphs, why, question) {
+    if (why) return why;
+    const neutralParagraph = paragraphs.find(part => !/^Правильный ответ/i.test(part) && !/^Почему:/i.test(part) && !/^Зачем:/i.test(part) && !/^Как:/i.test(part));
+    if (neutralParagraph) return neutralParagraph;
+    return question.question || 'Перед практикой разберём ключевую идею и её ограничения.';
+}
+
+function normalizeTheoryTitle(title = '') {
+    return title.trim().toLowerCase();
+}
+
+function renderPracticeContent(tabId, questions) {
+    const practicePanel = document.querySelector('.practice-panel');
+    if (!practicePanel) return;
+    if (!questions.length) {
+        practicePanel.innerHTML = `
+            <div class="practice-empty">
+                <i class="fas fa-clipboard-list"></i>
+                <p>Пока для этой темы нет тестов. Перечитай теорию и загляни позже.</p>
+            </div>
+        `;
+        collapsePracticePanel();
+        return;
+    }
+    practicePanel.innerHTML = `
+        <div class="practice-header">
+            <p class="practice-eyebrow">Проверка понимания</p>
+            <h3>Давай закрепим тему тестом</h3>
+            <p>Ответь на ${questions.length} вопросов подряд, чтобы отметить тему пройденной.</p>
+            <div class="practice-controls">
+                <button type="button" class="practice-close-btn" data-action="back-to-theory">
+                    <i class="fas fa-arrow-left"></i>
+                    Вернуться к теории
+                </button>
+            </div>
+        </div>
+        <div class="questions-container">
+            ${questions.map(renderQuestionCard).join('')}
+        </div>
+    `;
+    practicePanel.dataset.tab = tabId;
+    applyCodeHighlighting();
+}
+
+function collapsePracticePanel(options = {}) {
+    const practicePanel = document.querySelector('.practice-panel');
+    if (!practicePanel) return;
+    practicePanel.classList.add('practice-panel-collapsed');
+    practicePanel.setAttribute('aria-hidden', 'true');
+    setTheoryVisibility(true);
+    syncShellLayout();
+    if (!options.silent) {
+        const hero = document.querySelector('.theory-panel');
+        if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function showPracticePanel() {
+    const practicePanel = document.querySelector('.practice-panel');
+    if (!practicePanel) return;
+    practicePanel.classList.remove('practice-panel-collapsed');
+    practicePanel.setAttribute('aria-hidden', 'false');
+    setTheoryVisibility(false);
+    syncShellLayout();
+    scrollPracticeIntoView();
+}
+
+function isPracticePanelCollapsed() {
+    const practicePanel = document.querySelector('.practice-panel');
+    return practicePanel ? practicePanel.classList.contains('practice-panel-collapsed') : false;
+}
+
+function isTheoryPanelHidden() {
+    const theoryPanel = document.querySelector('.theory-panel');
+    return theoryPanel ? theoryPanel.classList.contains('theory-panel-hidden') : false;
+}
+
+function setTheoryVisibility(isVisible) {
+    const theoryPanel = document.querySelector('.theory-panel');
+    if (!theoryPanel) return;
+    theoryPanel.classList.toggle('theory-panel-hidden', !isVisible);
+    theoryPanel.setAttribute('aria-hidden', String(!isVisible));
+}
+
+function syncShellLayout() {
+    const shell = document.querySelector('.tab-content-shell');
+    if (!shell) return;
+    const practiceCollapsed = isPracticePanelCollapsed();
+    const theoryHidden = isTheoryPanelHidden();
+    shell.classList.toggle('practice-hidden', practiceCollapsed && !theoryHidden);
+    shell.classList.toggle('practice-only', !practiceCollapsed && theoryHidden);
+    if (!practiceCollapsed && !theoryHidden) {
+        shell.classList.remove('practice-hidden', 'practice-only');
+    }
 }
 
 /**
@@ -211,6 +946,18 @@ function handleDocumentClick(e) {
         handleAnswerClick(e.target);
         return;
     }
+    const launchBtn = e.target.closest('[data-action="launch-practice"]');
+    if (launchBtn) {
+        showPracticePanel();
+        updateNavigation();
+        return;
+    }
+    const backBtn = e.target.closest('[data-action="back-to-theory"]');
+    if (backBtn) {
+        collapsePracticePanel();
+        updateNavigation();
+        return;
+    }
     if (e.target.classList.contains('nav-btn-prev') || e.target.closest('.nav-btn-prev')) {
         navigateQuestion(-1);
         return;
@@ -234,40 +981,83 @@ function buildLayout() {
     if (!container) return;
     container.innerHTML = `
         <header>
-            <h1><i class="fas fa-graduation-cap"></i> Computer Science</h1>
-            <p class="subtitle">Подготовка к собеседованию: ООП, Алгоритмы и Структуры данных</p>
+            <div class="hero-eyebrow">Mindful Prep · Теория → Практика → Проверка</div>
+            <h1><i class="fas fa-graduation-cap"></i> Concept Prep Lab</h1>
+            <p class="subtitle">Каждая тема начинается с понятной теории, заканчивается тестом и фиксируется как «пройденная», когда ты берёшь 100%.</p>
+            <div class="hero-grid">
+                <article class="hero-card">
+                    <div class="hero-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div>
+                        <h2>1. Теория с контекстом</h2>
+                        <p>Short essays объясняют «зачем» и «почему» на языке инженера, а не учебника.</p>
+                    </div>
+                </article>
+                <article class="hero-card">
+                    <div class="hero-icon"><i class="fas fa-code"></i></div>
+                    <div>
+                        <h2>2. Примеры кода</h2>
+                        <p>Каждый блок сопровождается работающим TypeScript/JS фрагментом и разбором.</p>
+                    </div>
+                </article>
+                <article class="hero-card">
+                    <div class="hero-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div>
+                        <h2>3. Тест на закрепление</h2>
+                        <p>Проходишь мини-тест в конце раздела: 100% = тема считается выученной.</p>
+                    </div>
+                </article>
+            </div>
         </header>
         <div class="tabs" role="tablist" aria-label="Разделы"></div>
-        <div id="content"></div>
+        <section class="tab-content-shell">
+            <aside class="theory-panel" aria-live="polite"></aside>
+            <div id="content" class="practice-panel" aria-live="polite"></div>
+        </section>
     `;
 }
 
 function renderTabs() {
     const tabsEl = document.querySelector('.tabs');
     if (!tabsEl) return;
-    const tabs = [
-        { id: 'oop', title: 'ООП' },
-        { id: 'algorithms', title: 'Алгоритмы' },
-        { id: 'data-structures', title: 'Структуры данных' },
-        { id: 'leetcode', title: 'LeetCode' },
-        { id: 'event-loop', title: 'Event Loop' },
-        { id: 'solid', title: 'SOLID' },
-        { id: 'foundations', title: 'Основы' },
-        { id: 'theory', title: 'Теория' }
-    ];
-    tabsEl.innerHTML = tabs.map((t, i) => `
-        <button type="button" id="tab-${t.id}" class="tab-btn${i===0?' active':''}" role="tab" aria-selected="${i===0}" aria-controls="${t.id}" tabindex="${i===0?'0':'-1'}" data-tab="${t.id}">${t.title}</button>
+    tabsEl.innerHTML = AppConfig.tabs.map((tab, i) => `
+        <button
+            type="button"
+            id="tab-${tab.id}"
+            class="tab-btn${i===0?' active':''}"
+            role="tab"
+            aria-selected="${i===0}"
+            aria-controls="${tab.id}"
+            tabindex="${i===0?'0':'-1'}"
+            data-tab="${tab.id}"
+        >
+            <span class="tab-title">${tab.title}</span>
+            <span class="tab-status">
+                <i class="fas fa-book-open"></i> Теория + практика
+            </span>
+        </button>
     `).join('');
     tabsEl.addEventListener('click', (e) => {
         const btn = e.target.closest('.tab-btn');
         if (!btn) return;
         switchTab(btn.dataset.tab);
     });
+    updateTabCompletionIndicators();
 }
 
 function renderTabContent(tabId) {
     const content = document.getElementById('content');
-    if (!content) return;
+    const theoryPanel = document.querySelector('.theory-panel');
+    if (!content || !theoryPanel) return;
+    if (tabId === 'theory') {
+        const theoryEntries = globalTheoryInsights;
+        appState.currentQuestionIndex[tabId] = 0;
+        appState.correctAnswers[tabId] = 0;
+        renderTheoryContent(tabId, theoryEntries, false);
+        renderPracticeContent(tabId, []);
+        collapsePracticePanel({ silent: true });
+        updateNavigation();
+        return;
+    }
     const sections = {
         oop: [
             {
@@ -656,124 +1446,6 @@ function renderTabContent(tabId) {
         ],
         theory: [
             {
-                title: '1. Мышление «зачем»',
-                type: 'info',
-                icon: 'fa-brain',
-                tagline: 'От реактивного кодинга к продуктовому влиянию',
-                meta: ['Decision Records', 'Context First'],
-                summary: 'Сеньорским инженером делает не количество фреймворков, а привычка объяснять, зачем решение существует и когда оно перестанет работать.',
-                bullets: [
-                    'Контекст важнее синтаксиса: риск, бюджет, скорость и аудитория определяют архитектуру.',
-                    '5 строк Decision Record экономят часы митингов: проблема → варианты → выбор → риски.',
-                    'Эмпатия к бизнесу = язык влияния: объясняй последствия в метриках, а не в трейтах классов.'
-                ],
-                why: 'Причинно-следственное мышление делает систему устойчивой: ты видишь ограничения заранее и защищаешь решения перед бизнесом.',
-                how: 'Фиксируй мотивацию в README/ADR сразу после решения — один параграф дисциплинирует рассуждения и помогает коллегам (и ИИ) продолжить работу без тебя.',
-                takeaway: 'Привычка задавать «почему мы делаем это сейчас?» экономит месяцы поддержки и повышает доверие команды.',
-                quote: 'Context eats frameworks for breakfast.'
-            },
-            {
-                title: '2. Слои ответственности и связность',
-                type: 'info',
-                icon: 'fa-sitemap',
-                tagline: 'Cohesion & Coupling в реальных сервисах',
-                meta: ['Architecture', 'Team Hand-offs'],
-                summary: 'Высокая связность внутри модуля и слабая связанность между модулями ускоряют изменения и снижают стоимость ошибок.',
-                bullets: [
-                    'Cohesion = одна чёткая причина для изменения класса или сервиса.',
-                    'Coupling снижается внедрением зависимостей и контрактами, а не магией DI контейнера.',
-                    'Чёткие слои (контроллер → сервис → репозиторий) дают язык обсуждения с продактом.'
-                ],
-                why: 'Когда обязанности перемешаны, каждая правка превращается в minimonolith и тормозит команду.',
-                how: 'Проверяй архитектуру вопросом: «Можно ли переписать сервис, не трогая остальное?». Если нет — разделяй ответственность и вводи интерфейсы.',
-                takeaway: 'Лучший аргумент на ревью: не «так красивее», а «этот слой изменится по другой причине — разделим».',
-                quote: 'Сильная связность — это налог на скорость команды.'
-            },
-            {
-                title: '3. Алгоритмическая интуиция без скуки',
-                type: 'info',
-                icon: 'fa-chart-line',
-                tagline: 'Big-O как язык компромиссов',
-                meta: ['LeetCode', 'Performance'],
-                summary: 'Асимптотика — это не формула из учебника, а быстрый тест «проживёт ли решение рост данных».',
-                bullets: [
-                    'Называй сложность вместе с ограничением: O(n log n) при n ≤ 10⁵ звучит конкретнее.',
-                    'В голове держи 3 коридора: <10⁴ (всё сойдёт), <10⁶ (нужен логарифм), >10⁷ (только линейные/потоковые).',
-                    'Используй «стоимость итерации»: сколько запросов/памяти съест одно действие.'
-                ],
-                why: 'Без цифр задачи превращаются в угадайку и легко выбрать красивый, но медленный подход.',
-                how: 'На ревью проговаривай: «Берём два указателя — будем читать массив один раз, значит выдержим 5 млн элементов».',
-                takeaway: 'Алгоритмическая интуиция = скорость принятия решений под давлением продуктов и дедлайнов.',
-                quote: 'Сложность — это способ сказать бизнесу, выдержит ли система рост.'
-            },
-            {
-                title: '4. Event Loop как контракт UX',
-                type: 'info',
-                icon: 'fa-infinity',
-                tagline: 'Асинхронность = качество интерфейса',
-                meta: ['JS Runtime', 'Performance'],
-                summary: 'Event Loop — это соглашение о том, что интерфейс не должен застывать. Любая блокировка превращается в баг восприятия.',
-                bullets: [
-                    'Микрозадачи (Promise) закрывают контекст, прежде чем пользователь что-то заметит.',
-                    'Макрозадачи (таймеры, I/O) нужно дробить, чтобы не мешать отрисовке.',
-                    'requestAnimationFrame — единственный способ говорить с браузером на его частоте.'
-                ],
-                why: 'Без понимания очередей задач легко получить «подлагивающий» UI и вечные баг-репорты о тормозах.',
-                how: 'Дроби тяжёлые операции на чанки <16мс, выноси ML/парсинг в Web Worker, следи за длинными макрозадачами в Performance профайлере.',
-                takeaway: 'Инженер, который уважает Event Loop, экономит деньги компании на оптимизации и повышает NPS.'
-            },
-            {
-                title: '5. SOLID как язык договорённостей',
-                type: 'info',
-                icon: 'fa-cubes',
-                tagline: 'Принципы Роберта Мартина в 2025 году',
-                meta: ['SOLID', 'Командные практики'],
-                summary: 'SOLID — это не набор мантр, а способ говорить о рисках изменения кода.',
-                bullets: [
-                    'SRP защищает от «god objects» и облегчает делегирование задач.',
-                    'OCP = «добавь новый класс, не трогая старые» — ключ к быстрой эволюции продукта.',
-                    'DIP делает сервисы тестируемыми: зависим не от класса, а от контракта.'
-                ],
-                why: 'Когда команда понимает SOLID одинаково, ревью превращается в разговор о последствиях, а не о вкусе.',
-                how: 'Храни примеры нарушений в wiki: «вот где LSP нас подвёл, поэтому используем композицию».',
-                takeaway: 'SOLID — язык продукции: он объясняет, почему архитектура стоит времени.',
-                quote: 'Принципы — это страховка от хаоса изменений.'
-            },
-            {
-                title: '6. Observability и петли обратной связи',
-                type: 'info',
-                icon: 'fa-wave-square',
-                tagline: 'Видимость системы = уверенность команды',
-                meta: ['Metrics', 'Tracing', 'Postmortems'],
-                summary: 'Observability — это умение ответить на вопрос «что происходит?» без новой деплойки.',
-                bullets: [
-                    'Метрики SLI/SLO связывают технику с бизнес-обещаниями.',
-                    'Дистрибутивные трейсеры показывают, где теряется время, без гадания по логам.',
-                    'Постмортемы фиксируют уроки, а не виновных.'
-                ],
-                why: 'Без наблюдаемости любая авария превращается в хаос, а продукт теряет доверие пользователей.',
-                how: 'Добавляй корелированные ID, алерты с контекстом и короткие заметки «что узнали» после инцидента.',
-                takeaway: 'Система прозрачна — значит, команда тратит время на развитие, а не на гадание.',
-                quote: 'Неизмеримое нельзя улучшить.'
-            },
-            {
-                title: '7. Инженер + ИИ',
-                type: 'info',
-                icon: 'fa-robot',
-                tagline: 'Партнёрство, а не конкуренция',
-                meta: ['AI Pair', 'Prompt Design'],
-                summary: 'ИИ ускоряет генерацию кода, но ответственность за архитектуру, безопасность и «зачем» остаётся на человеке.',
-                bullets: [
-                    'Формулируй промпты как спеки: вход → ограничения → проверка.',
-                    'Храни контекст решений, чтобы ИИ продолжал работу в нужном направлении.',
-                    'Автоматизируй рутину (тесты, документацию), освобождая время под сложные решения.'
-                ],
-                why: 'ИИ без надзора порождает долговой код. Инженер задаёт рамки и оценивает риски.',
-                how: 'Используй ИИ как собеседника: проси перечислить компромиссы, составляй чек-листы для ревью.',
-                takeaway: 'Кто умеет управлять ИИ, тот масштабирует свой опыт на всю команду.',
-                quote: 'ИИ — ускоритель, но не заменитель инженерного суждения.'
-            },
-            {
                 title: '8. CAP-теорема в продуктах',
                 type: 'info',
                 icon: 'fa-diagram-project',
@@ -894,88 +1566,14 @@ function renderTabContent(tabId) {
             }
         ]
     };
-    const questions = sections[tabId] || [];
+    const rawEntries = sections[tabId] || [];
+    const { theoryEntries, practiceQuestions } = splitTabEntries(rawEntries, tabId);
     appState.currentQuestionIndex[tabId] = 0;
     appState.correctAnswers[tabId] = 0;
-    content.innerHTML = `
-        <div class="questions-container">
-            ${questions.map((q, i) => `
-                ${(function() {
-                    const isInfo = q.type === 'info';
-                    const cardClass = isInfo ? 'info-card' : `question-card${i===0?' active':''}`;
-                    const dataAttr = isInfo ? '' : ` data-question-index="${i}"`;
-                    const codeBlock = q.code ? `
-                        <div class="code-block"><pre><code class="language-typescript">${q.code}</code></pre></div>
-                    ` : '';
-                    if (isInfo) {
-                        const summary = q.summary ? `<p class="info-summary">${q.summary}</p>` : '';
-                        const bullets = Array.isArray(q.bullets) && q.bullets.length
-                            ? `<ul class="info-bullets">${q.bullets.map(item => `<li>${item}</li>`).join('')}</ul>`
-                            : '';
-                        const meta = Array.isArray(q.meta) && q.meta.length
-                            ? `<div class="info-meta">${q.meta.map(label => `<span class="info-pill">${label}</span>`).join('')}</div>`
-                            : '';
-                        const sections = [];
-                        if (q.why) sections.push({ label: 'Почему важно', icon: 'fa-lightbulb', text: q.why });
-                        if (q.how) sections.push({ label: 'Как применять', icon: 'fa-screwdriver-wrench', text: q.how });
-                        if (q.takeaway) sections.push({ label: 'Что запомнить', icon: 'fa-bookmark', text: q.takeaway });
-                        const sectionsHtml = sections.length
-                            ? `<div class="info-sections">${sections.map(section => `
-                                <div class="info-section">
-                                    <div class="info-section-title"><i class="fas ${section.icon}"></i>${section.label}</div>
-                                    <p>${section.text}</p>
-                                </div>
-                            `).join('')}</div>`
-                            : '';
-                        const quote = q.quote ? `<div class="info-quote"><i class="fas fa-quote-left"></i><p>${q.quote}</p></div>` : '';
-                        return `
-                            <article class="${cardClass}"${dataAttr}>
-                                <div class="info-header">
-                                    ${q.icon ? `<div class="info-icon"><i class="fas ${q.icon}"></i></div>` : ''}
-                                    <div class="info-headings">
-                                        <h2>${q.title}</h2>
-                                        ${q.tagline ? `<p class="info-tagline">${q.tagline}</p>` : ''}
-                                        ${meta}
-                                    </div>
-                                </div>
-                                ${summary}
-                                ${codeBlock}
-                                ${bullets}
-                                ${sectionsHtml}
-                                ${quote}
-                            </article>
-                        `;
-                    }
-                    return `
-                        <div class="${cardClass}"${dataAttr}>
-                            <h2>${q.title}</h2>
-                            ${codeBlock}
-                            <div class="question">
-                                <p><strong>Вопрос:</strong> ${q.question || 'Что выведется в консоль и почему?'}</p>
-                                <div class="answers">
-                                    ${q.answers.map(a => `
-                                        <button type="button" class="answer-btn" ${a.correct?'data-correct="true"':''}>${a.text}</button>
-                                    `).join('')}
-                                </div>
-                                <div class="explanation hidden">
-                                    <strong>Ответ:</strong>
-                                    ${q.explanation.split('\n\n').map(para => `<p>${para}</p>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                })()}
-            `).join('')}
-        </div>
-    `;
+    renderTheoryContent(tabId, theoryEntries, Boolean(practiceQuestions.length));
+    renderPracticeContent(tabId, practiceQuestions.map((question, index) => ({ ...question, index })));
+    collapsePracticePanel({ silent: true });
     updateNavigation();
-    
-    // Применяем подсветку синтаксиса ко всем блокам кода
-    if (typeof hljs !== 'undefined') {
-        document.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightElement(block);
-        });
-    }
 }
 
 // ============================================================================
@@ -1122,7 +1720,7 @@ function updateNavigation() {
     const currentIndex = appState.currentQuestionIndex[tabId] || 0;
     const container = getQuestionsContainer(tabId);
     const navContainer = getOrCreateNavigationContainer(container);
-    if (!questions.length) {
+    if (!questions.length || isPracticePanelCollapsed()) {
         navContainer.innerHTML = '';
         navContainer.classList.add('hidden');
         return;
@@ -1184,6 +1782,7 @@ function showResults() {
     const totalQuestions = questions.length;
     const correctCount = appState.correctAnswers[tabId] || 0;
     const percentage = Math.round((correctCount / totalQuestions) * 100);
+    const isPerfect = percentage === 100;
     
     // Скрываем все вопросы
     questions.forEach(q => q.classList.remove('active'));
@@ -1205,9 +1804,13 @@ function showResults() {
     const quoteData = quotes[Math.floor(Math.random() * quotes.length)];
     
     // Отображаем результаты
-    resultsContainer.innerHTML = createResultsHTML(correctCount, percentage, totalQuestions, quoteData);
+    resultsContainer.innerHTML = createResultsHTML(correctCount, percentage, totalQuestions, quoteData, isPerfect);
     resultsContainer.classList.remove('hidden');
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (isPerfect && !isTabCompleted(tabId)) {
+        markTabCompleted(tabId, { score: percentage });
+    }
 }
 
 /**
@@ -1218,7 +1821,7 @@ function showResults() {
  * @param {Object} quoteData - данные мотивирующей цитаты
  * @returns {string} - HTML строка
  */
-function createResultsHTML(correctCount, percentage, totalQuestions, quoteData) {
+function createResultsHTML(correctCount, percentage, totalQuestions, quoteData, isPerfect) {
     return `
         <div class="results-card">
             <div class="results-icon">
@@ -1242,6 +1845,12 @@ function createResultsHTML(correctCount, percentage, totalQuestions, quoteData) 
                     <span class="stat-label">всего вопросов</span>
                 </div>
             </div>
+            ${isPerfect ? `
+                <div class="completion-pill">
+                    <i class="fas fa-check-circle"></i>
+                    Тема помечена как пройденная
+                </div>
+            ` : ''}
             <div class="motivational-quote">
                 <i class="fas ${quoteData.icon}"></i>
                 <p>${quoteData.text}</p>
