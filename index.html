@@ -3,22 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Computer Science Interview Trainer</title>
+    <title>Engineering Base | Focus Mode</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark-reasonable.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container"></div>
+    <div class="app-shell">
+        <!-- ЛЕВАЯ ПАНЕЛЬ (Навигация) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-cube accent-text"></i>
+                    <span>Base<span class="accent-text">Runner</span></span>
+                </div>
+            </div>
+            
+            <!-- Меню модулей -->
+            <nav class="module-list" id="tabs-container">
+                <!-- JS сгенерирует кнопки здесь -->
+            </nav>
+
+            <div class="user-profile">
+                <div class="level-info">
+                    <span id="user-lvl">Lvl 1</span>
+                    <span id="xp-text" class="xp-text">0 XP</span>
+                </div>
+                <div class="xp-track">
+                    <div class="xp-fill" id="xp-progress" style="width: 0%"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ЦЕНТРАЛЬНАЯ ПАНЕЛЬ (Контент) -->
+        <main class="main-stage">
+            <!-- Верхняя шапка с переключателем режимов -->
+            <header class="stage-header">
+                <div class="header-left">
+                    <h2 id="active-module-title">Модуль</h2>
+                    <span class="module-badge" id="active-module-badge">Core</span>
+                </div>
+                
+                <!-- Переключатель: Теория / Практика -->
+                <div class="mode-switcher">
+                    <button class="mode-btn active" data-mode="theory">
+                        <i class="fa-solid fa-book"></i> Теория
+                    </button>
+                    <button class="mode-btn" data-mode="practice">
+                        <i class="fa-solid fa-code"></i> Практика
+                    </button>
+                </div>
+            </header>
+
+            <!-- Область контента (Скроллится) -->
+            <div class="content-scroll-area" id="content-area">
+                <!-- Сюда рендерится либо теория, либо практика -->
+            </div>
+        </main>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
-    <script src="data.js"></script>
-    <script src="ui.js"></script>
-    <script src="quiz.js"></script>
-    <script src="tabs.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

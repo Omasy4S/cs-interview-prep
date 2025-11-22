@@ -1896,3 +1896,5 @@ function scrollPracticeIntoView() {
     const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     practicePanel.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
 }
+
+export { tabsConfig, AppConfig, globalTheoryInsights };
